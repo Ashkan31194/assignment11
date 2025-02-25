@@ -10,7 +10,7 @@ USER vscode
 RUN curl -fsSL https://install.julialang.org | sh -s -- -y; \
     /home/vscode/.juliaup/bin/juliaup add 1.11; \
     /home/vscode/.juliaup/bin/juliaup default 1.11
-RUN /home/vscode/.juliaup/bin/julia -e "using Pkg; Pkg.add(\"IJulia\"); Pkg.add(\"LanguageServer\"); Pkg.add(\"Revise\"); Pkg.activate(\"/tmp/conda-tmp\"); Pkg.instantiate()"; \ 
+RUN /home/vscode/.juliaup/bin/julia -e "using Pkg; Pkg.add(\"IJulia\"); Pkg.add(\"LanguageServer\"); Pkg.add(\"Revise\"); Pkg.activate(\".\"); Pkg.instantiate(); Pkg.precompile()"; \ 
     mkdir -p $HOME/.julia/config && echo "using Revise;" >> $HOME/.julia/config/startup.jl
 
 USER root
