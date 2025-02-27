@@ -68,8 +68,33 @@ function z(P, params)
     D * Ppr * (1 + y + y ^ 2 - y ^ 3) / (D * Ppr + E * y ^ 2 - F * y ^ G) / (1 - y) ^ 3
 end
 
-function gas_solver(Pₒ, Vₚ, Pₛ, Tₛ, Pwf,  n, J, T, ρ, tmax)
-    #return the solver composite type (what solve() returns)
+function dz_dP(P, params)
+    return ForwardDiff.derivative(P -> z(P, params), P)
+end
+function gas_ode!(res, dPdt, P, params, t)
+    Vₚ, Pₛ, Tₛ, Pwf, n, J, T, ρ = params  
+    
+    z_factor = z(P[1], (ρ, T))
+    dz_dp = dz_dP(P[1], (ρ, T))
+
+    
+    res[1] = dPdt[1] * (Vₚ * Tₛ / (Pₛ * T)) * (1 / z_factor - (P[1] / z_factor^2) * dz_dp) + J * (P[1]^2 - Pwf^2)^n
+
+    nothing
+end
+
+function gas_solver(Pₒ, Vₚ, Pₛ, Tₛ, Pwf, n, J, T, ρ, tmax)
+    # The function signature remains unchanged!
+    
+    params = [Vₚ, Pₛ, Tₛ, Pwf, n, J, T, ρ]
+
+    P₀ = [Pₒ]  
+    tspan = (0.0, tmax) 
+    
+    prob = DAEProblem(gas_ode!,[0.0], P₀, tspan, params, differential_vars=[true])
+    sol = solve(prob)  
+    
+    return sol
 end
 
 export gas_solver

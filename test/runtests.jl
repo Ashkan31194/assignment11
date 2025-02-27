@@ -13,7 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import assignment11
+#import assignment11
+include("../src/assignment11.jl")
 using Test
 
 @testset "assignment11.jl" begin
